@@ -2,26 +2,11 @@ package NET;
 
 import java.net.*;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
-import javax.swing.ImageIcon;
-
 
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
-import DTO.DTO_LANImageInforObject;
 import GUI.RemoteScreenForm;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 
 public class LANClientThread extends Thread {
@@ -34,7 +19,7 @@ public class LANClientThread extends Thread {
     private final int serverPort;
     private final String pass;
 
-    private Socket s;
+    private Socket socket;
     private OutputStream os;
     private ObjectOutputStream oos;
     private InputStream is;
@@ -44,6 +29,7 @@ public class LANClientThread extends Thread {
     private boolean isReceivingImage = false;
     private int countFaild = 0;
     private final int maxCountFail = 30;//=6;
+    public ThreadGuiNhanYeuCauXacThuc threadGuiNhanYeuCauXacThuc = null;
 
     public LANClientThread(String serverIP, int serverPort, String pass) {
         this.serverIP = serverIP;
@@ -82,15 +68,14 @@ public class LANClientThread extends Thread {
     }
 
     //Start and destroy client
-    public ThreadGuiNhanYeuCauXacThuc threadGuiNhanYeuCauXacThuc = null;
 
     public void StartClient() {
         //Gui goi tin yeu cau ket noi
         try {
-            if (s == null) {
-                s = new Socket(serverIP, serverPort);
+            if (socket == null) {
+                socket = new Socket(serverIP, serverPort);
                 if (os == null && oos == null) {
-                    os = s.getOutputStream();
+                    os = socket.getOutputStream();
                     oos = new ObjectOutputStream(os);
                 }
             }
@@ -123,7 +108,7 @@ public class LANClientThread extends Thread {
 
             ois.close();
             is.close();
-            s.close();
+            socket.close();
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -191,7 +176,7 @@ public class LANClientThread extends Thread {
     }
 
     public void SendMessage(String message) {
-        if (s != null && oos != null) {
+        if (socket != null && oos != null) {
             try {
                 oos.writeObject(message);
                 oos.flush();
@@ -223,7 +208,7 @@ public class LANClientThread extends Thread {
                         oos.writeObject("RequireConnect:" + pass);
                         oos.reset();
                         dangGet = true;
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     }
                 } catch (Exception e) {
                     // TODO: handle exception
@@ -240,7 +225,7 @@ public class LANClientThread extends Thread {
                 while (true) {
                     if (true) {
                         try {
-                            is = s.getInputStream();
+                            is = socket.getInputStream();
                             //bin=new BufferedInputStream(is);
                             //ois = new ObjectInputStream(bin);
                             ois = new ObjectInputStream(is);

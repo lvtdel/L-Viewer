@@ -21,7 +21,7 @@ public class BLL_LANServerChat implements BLL_LANChat {
 	@Override
 	public void Stop() {
 		if(lanServerChat!=null) {
-			lanServerChat.StopChat();
+			lanServerChat.stopChat();
 			lanServerChat=null;
 		}
 	}
@@ -30,7 +30,7 @@ public class BLL_LANServerChat implements BLL_LANChat {
 	@Override
 	public void SendMessage(String message) {
 		if(lanServerChat!=null) {
-			lanServerChat.SendMessage(message);
+			lanServerChat.sendMessage(message);
 		}
 	}
 

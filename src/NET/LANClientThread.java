@@ -78,6 +78,12 @@ public class LANClientThread extends Thread {
                     os = socket.getOutputStream();
                     oos = new ObjectOutputStream(os);
                 }
+                if (is == null && ois == null) {
+                    is = socket.getInputStream();
+                    //bin=new BufferedInputStream(is);
+                    //ois = new ObjectInputStream(bin);
+                    ois = new ObjectInputStream(is);
+                }
             }
 
             //is vs ois da chuyen cho thread o duoi khoi tao
@@ -205,12 +211,14 @@ public class LANClientThread extends Thread {
             while (!isXacThuc) {
                 try {
                     if (!dangGet) {
+                        Thread.sleep(1000);
+
                         oos.writeObject("RequireConnect:" + pass);
                         oos.reset();
                         dangGet = true;
-                        Thread.sleep(1000);
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // TODO: handle exception
                     System.out.println("Loi xac thuc connect");
                     remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttValidationErr"));
@@ -225,10 +233,7 @@ public class LANClientThread extends Thread {
                 while (true) {
                     if (true) {
                         try {
-                            is = socket.getInputStream();
-                            //bin=new BufferedInputStream(is);
-                            //ois = new ObjectInputStream(bin);
-                            ois = new ObjectInputStream(is);
+
                             String message = (String) ois.readObject();
                             if (message.equals("XacThucThanhCong")) {
                                 isXacThuc = true;

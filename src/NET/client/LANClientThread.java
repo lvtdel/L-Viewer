@@ -1,9 +1,9 @@
-package NET;
+package NET.client;
 
 import java.net.*;
 
 
-import BLL.BLL_RemoteScreenForm;
+import BLL.client.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import GUI.RemoteScreenForm;
 
@@ -47,6 +47,7 @@ public class LANClientThread extends Thread {
             } catch (InterruptedException e) {
             }
             if (countXacThucFaild > 200) {
+                System.out.println("Hủy kết nối và kết nối lại");
                 DestroyClient();
                 StartClient();
                 countXacThucFaild = 0;
@@ -74,7 +75,9 @@ public class LANClientThread extends Thread {
         try {
             if (socket == null) {
                 socket = new Socket(serverIP, serverPort);
+                System.out.println("Client: Tạo lại kết nối");
                 if (os == null && oos == null) {
+                    System.out.println("Client: Tạo lại stream data");
                     os = socket.getOutputStream();
                     oos = new ObjectOutputStream(os);
                 }
@@ -103,16 +106,18 @@ public class LANClientThread extends Thread {
         isReceivingImage = false;
         isXacThucThanhCong = false;
         try {
-            oos.close();
-            os.close();
+            oos = null;
+            os = null;
 
-            ois.close();
-            is.close();
+            ois = null;
+            is = null;
             socket.close();
+            socket = null;
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            //e.printStackTrace();
+            System.out.println("Đóng kết nối thất bại");
+            e.printStackTrace();
         }
     }
 
@@ -205,10 +210,10 @@ public class LANClientThread extends Thread {
             while (!isXacThuc) {
                 try {
                     if (!dangGet) {
+                        Thread.sleep(1000);
                         oos.writeObject("RequireConnect:" + pass);
                         oos.reset();
                         dangGet = true;
-                        Thread.sleep(1000);
                     }
                 } catch (Exception e) {
                     // TODO: handle exception

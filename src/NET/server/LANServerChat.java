@@ -1,4 +1,4 @@
-package NET;
+package NET.server;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import GUI.ServerChatForm;
+import NET.LANChat;
+import NET.LANSocketInfor;
+import NET.constants.LANChatConstants;
 
 import static NET.util.FileSupport.saveToFile;
 
@@ -64,10 +67,10 @@ public class LANServerChat extends Thread implements LANChat {
     public void sendMessage(String message) {
         try {
             Path path = Path.of("D:\\Downloads\\about.txt");
-            byte[]  fileByte = Files.readAllBytes(path);
+            byte[] fileByte = Files.readAllBytes(path);
             String fileName = path.getFileName().toString();
 
-            sendFile(fileByte, fileName);
+            sendFile(path.toString(), fileName);
 
             oStream.writeUTF(message);
             oStream.flush();
@@ -77,15 +80,39 @@ public class LANServerChat extends Thread implements LANChat {
     }
 
     @Override
-    public void sendFile(byte[] fileByte, String fileName) {
+    public void sendFile(String path, String fileName) {
+//        try {
+//            oStream.writeUTF(LANChatConstants.SEND_FILE_COMMAND);
+//            oStream.writeUTF(fileName);
+//            oStream.flush();
+//
+//            oStream.write(fileByte);
+////            System.out.println("Nội dung file được gửi là: " + new String(fileByte));
+//            oStream.flush();
+//        } catch (Exception e) {
+//            System.out.println("Khong gui file duoc");
+//        }
         try {
+            int bytes = 0;
+            File file = new File(path);
+            FileInputStream fileInputStream = new FileInputStream(file);
+
             oStream.writeUTF(LANChatConstants.SEND_FILE_COMMAND);
             oStream.writeUTF(fileName);
-            oStream.write(fileByte);
-            oStream.flush();
-        } catch (Exception e) {
-            System.out.println("Khong gui file duoc");
+            oStream.writeLong(file.length());
+
+            byte[] buffer = new byte[1024 * 1024];// max 4GB
+            while ((bytes = fileInputStream.read(buffer)) != -1) {
+                oStream.write(buffer, 0, bytes);
+                oStream.flush();
+            }
+
+            fileInputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+
     }
 
     public LANServerChat(int serverPort) {

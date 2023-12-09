@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import javax.sound.sampled.TargetDataLine;
 
 import BLL.BLL_LANAudioChat;
-import NET.LANAudioClient;
+import NET.client.LANAudioClient;
 
 public class BLL_LANAudioClient implements BLL_LANAudioChat {
 

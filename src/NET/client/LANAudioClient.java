@@ -1,4 +1,4 @@
-package NET;
+package NET.client;
 
 import java.net.*;
 import java.util.logging.Level;
@@ -108,7 +108,7 @@ public class LANAudioClient {
     }
 
     public class ClientAudioSenderThread extends Thread {
-        private byte byte_buff[] = new byte[512];
+        private final byte[] byte_buff = new byte[512];
 
         @Override
         public void run() {
@@ -139,7 +139,7 @@ public class LANAudioClient {
     private boolean isReceiveAndSpeak = false;
 
     public class ClientAudioReceiverThread extends Thread {
-        private byte byte_buff[] = new byte[512];
+        private byte[] byte_buff = new byte[512];
 
         @Override
         public void run() {

@@ -1,14 +1,15 @@
-package NET;
+package NET.client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import GUI.ClientChatForm;
+import NET.LANChat;
+import NET.LANSocketInfor;
+import NET.constants.LANChatConstants;
 
 import static NET.util.FileSupport.saveToFile;
 
@@ -40,8 +41,8 @@ public class LANClientChat extends Thread implements LANChat {
                     String message = iStream.readUTF();
                     if (message.equals(LANChatConstants.SEND_FILE_COMMAND)) {
                         receiveFile();
-                        message = "Đã gửi 1 file";
-//                        continue;
+//                        message = "Đã gửi 1 file";
+                        continue;
                     }
                     System.out.println(message);
                     myClientChatForm.AddMessage("Partner", message);
@@ -54,6 +55,7 @@ public class LANClientChat extends Thread implements LANChat {
 
         } catch (Exception e) {
             System.out.println("Loi khoi tao client");
+            e.printStackTrace();
         }
     }
 
@@ -69,20 +71,58 @@ public class LANClientChat extends Thread implements LANChat {
 
     }
 
+    @Override
+    public void sendFile(String path, String fileName) {
+
+    }
+
     private void receiveFile() {
         try {
-            System.out.println("Client receive file");
+            int bytes = 0;
+
             String fileName = iStream.readUTF();
-            byte[] fileByte = iStream.readAllBytes();
-            saveToFile(LANChatConstants.SAVE_FILE_LOCATION + fileName, fileByte);
-        } catch (Exception e) {
+            long size = iStream.readLong(); // read file size
+
+            String pathSave = LANChatConstants.SAVE_FILE_LOCATION + fileName;
+            FileOutputStream fileOutputStream = new FileOutputStream(pathSave);
+            byte[] buffer = new byte[1024 * 1024]; // max 4GB
+            while (size > 0
+                    && (bytes = iStream.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
+                // Here we write the file using write method
+                fileOutputStream.write(buffer, 0, bytes);
+                size -= bytes; // read upto file size
+            }
+            // Here we received file
+            System.out.println("File is Received");
+            fileOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void sendFile(byte[] fileByte, String fileName) {
+//        try {
+//            System.out.print("Client receive file: ");
+//            String fileName = iStream.readUTF();
+//            System.out.println(fileName);
+//
+//            byte[] fileByte = iStream.readAllBytes();
+//            System.out.println("Nội dung file được nhận là: " + new String(fileByte));
+//
+////            saveToFile(LANChatConstants.SAVE_FILE_LOCATION + fileName, fileByte);
+////
+////            String content = "hello";
+////
+////            // Chuyển đổi chuỗi thành mảng byte
+////            byte[] fileByte = content.getBytes();
+//            saveToFile("E:\\Workspace\\Test transfer file dacs4\\OUT\\" + fileName, fileByte);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//}
 
-    }
+//    public void sendFile(byte[] fileByte, String fileName) {
+//
+//    }
 
     @Override
     public void open() throws IOException {

@@ -1,7 +1,7 @@
 package BLL.server;
 
 import BLL.BLL_LANChat;
-import NET.LANServerChat;
+import NET.server.LANServerChat;
 import NET.LANSocketInfor;
 
 public class BLL_LANServerChat implements BLL_LANChat {

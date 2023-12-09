@@ -1,4 +1,4 @@
-package NET;
+package NET.constants;
 
 public class LANChatConstants {
     public static final String SEND_FILE_COMMAND = "SEND_FILE_COMMAND";

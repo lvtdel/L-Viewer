@@ -10,7 +10,7 @@ import java.util.Random;
 
 import GUI.RemoteScreenForm;
 import GUI.ServerChatForm;
-import NET.LANServerThread;
+import NET.server.LANServerThread;
 
 public class BLL_LANForm {
     private static BLL_LANForm instance = null;

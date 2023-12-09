@@ -1,4 +1,4 @@
-package BLL;
+package BLL.client;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -7,9 +7,7 @@ import javax.swing.JOptionPane;
 
 import GUI.ClientChatForm;
 import GUI.RemoteScreenForm;
-import GUI.ServerChatForm;
-import NET.LANClientThread;
-import NET.LANServerThread;
+import NET.client.LANClientThread;
 
 public class BLL_RemoteScreenForm {
 	private static BLL_RemoteScreenForm instance=null;

@@ -3,7 +3,7 @@ package BLL.client;
 import java.net.InetAddress;
 
 import BLL.BLL_LANChat;
-import NET.LANClientChat;
+import NET.client.LANClientChat;
 import NET.LANSocketInfor;
 
 public class BLL_LANClientChat implements BLL_LANChat {

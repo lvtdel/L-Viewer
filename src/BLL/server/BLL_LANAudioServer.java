@@ -3,7 +3,7 @@ package BLL.server;
 import java.net.InetAddress;
 
 import BLL.BLL_LANAudioChat;
-import NET.LANAudioServer;
+import NET.server.LANAudioServer;
 
 
 public class BLL_LANAudioServer implements BLL_LANAudioChat {

@@ -3,5 +3,6 @@ package BLL;
 public interface BLL_LANChat {
 	void Start();
 	void Stop();
-	void SendMessage(String message);
+	void sendMessage(String message);
+	void sendFile(String path);
 }

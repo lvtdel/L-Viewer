@@ -1,17 +1,14 @@
 package NET.client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 import GUI.ClientChatForm;
 import NET.LANChat;
 import NET.LANSocketInfor;
 import NET.constants.LANChatConstants;
+import NET.util.FileSupport;
 
-import static NET.util.FileSupport.saveToFile;
 
 public class LANClientChat extends Thread implements LANChat {
     private Socket socket = null;
@@ -30,6 +27,7 @@ public class LANClientChat extends Thread implements LANChat {
         // TODO Auto-generated method stub
         super.run();
         try {
+            System.out.println("Gọi ClientChatForm.getInstance()");
             myClientChatForm = ClientChatForm.GetInstance();
             socket = new Socket(serverInfor.getIp(), serverInfor.getPort());
             System.out.println("Connected: " + socket);
@@ -44,7 +42,7 @@ public class LANClientChat extends Thread implements LANChat {
 //                        message = "Đã gửi 1 file";
                         continue;
                     }
-                    System.out.println(message);
+//                    System.out.println(message);
                     myClientChatForm.AddMessage("Partner", message);
                 } catch (IOException ioe) {
                     System.out.println("Khong co ket noi!");
@@ -71,58 +69,35 @@ public class LANClientChat extends Thread implements LANChat {
 
     }
 
-    @Override
     public void sendFile(String path, String fileName) {
-
-    }
-
-    private void receiveFile() {
         try {
             int bytes = 0;
+            File file = new File(path);
+            FileInputStream fileInputStream = new FileInputStream(file);
 
-            String fileName = iStream.readUTF();
-            long size = iStream.readLong(); // read file size
+            oStream.writeUTF(LANChatConstants.SEND_FILE_COMMAND);
+            oStream.writeUTF(fileName);
+            oStream.writeLong(file.length());
 
-            String pathSave = LANChatConstants.SAVE_FILE_LOCATION + fileName;
-            FileOutputStream fileOutputStream = new FileOutputStream(pathSave);
-            byte[] buffer = new byte[1024 * 1024]; // max 4GB
-            while (size > 0
-                    && (bytes = iStream.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
-                // Here we write the file using write method
-                fileOutputStream.write(buffer, 0, bytes);
-                size -= bytes; // read upto file size
+            byte[] buffer = new byte[1024 * 1024];// max 4GB
+            while ((bytes = fileInputStream.read(buffer)) != -1) {
+                oStream.write(buffer, 0, bytes);
+                oStream.flush();
             }
-            // Here we received file
-            System.out.println("File is Received");
-            fileOutputStream.close();
+
+            fileInputStream.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-//        try {
-//            System.out.print("Client receive file: ");
-//            String fileName = iStream.readUTF();
-//            System.out.println(fileName);
-//
-//            byte[] fileByte = iStream.readAllBytes();
-//            System.out.println("Nội dung file được nhận là: " + new String(fileByte));
-//
-////            saveToFile(LANChatConstants.SAVE_FILE_LOCATION + fileName, fileByte);
-////
-////            String content = "hello";
-////
-////            // Chuyển đổi chuỗi thành mảng byte
-////            byte[] fileByte = content.getBytes();
-//            saveToFile("E:\\Workspace\\Test transfer file dacs4\\OUT\\" + fileName, fileByte);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//}
+    private void receiveFile() {
+        String pathSave = FileSupport.saveFile(iStream);
 
-//    public void sendFile(byte[] fileByte, String fileName) {
-//
-//    }
+        String message = pathSave != null ? "Đã nhận 1 tệp tin: " + pathSave : "Nhận tệp tin thất bại";
+        ClientChatForm.GetInstance().AddMessage("Partner", message);
+    }
+
 
     @Override
     public void open() throws IOException {

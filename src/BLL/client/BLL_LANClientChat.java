@@ -1,6 +1,7 @@
 package BLL.client;
 
 import java.net.InetAddress;
+import java.nio.file.Path;
 
 import BLL.BLL_LANChat;
 import NET.client.LANClientChat;
@@ -33,9 +34,15 @@ public class BLL_LANClientChat implements BLL_LANChat {
     }
 
     @Override
-    public void SendMessage(String message) {
+    public void sendMessage(String message) {
         if (lanClientChat != null)
             lanClientChat.sendMessage(message);
+    }
+    @Override
+    public void sendFile(String path) {
+        String fileName = Path.of(path).getFileName().toString();
+
+        lanClientChat.sendFile(path, fileName);
     }
 
     public int GetClientChatSocketPort() {

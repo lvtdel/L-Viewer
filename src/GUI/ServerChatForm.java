@@ -42,8 +42,9 @@ public class ServerChatForm extends ChatForm {
     private ServerChatForm(int serverPort) {
         super();
         KhoiTaoEventSend();
+        khoiTaoEventSendFile();
         StartServerChatSocket(serverPort);
-        setTitle("Chat (s)");
+        setTitle("Chat (server)");
     }
 
     @Override
@@ -85,12 +86,9 @@ public class ServerChatForm extends ChatForm {
 
     @Override
     public void KhoiTaoEventSend() {
+        btnSendFile.addActionListener(e -> {});
         //Khoi tao event send
-        btnSend.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                SendMessageInTextbox();
-            }
-        });
+        btnSend.addActionListener(e -> SendMessageInTextBox());
         //Cho textbox
         txtText.addKeyListener(new KeyAdapter() {
             private boolean isShift = false;
@@ -100,7 +98,7 @@ public class ServerChatForm extends ChatForm {
                 if (e.getKeyCode() == 10 && !isShift) {
                     int length = txtText.getText().length();
                     txtText.setText(txtText.getText().substring(0, length - 1));
-                    SendMessageInTextbox();
+                    SendMessageInTextBox();
                     txtText.setText("");
                 } else if (e.getKeyCode() == 10 && isShift) {
                     txtText.append("\n");
@@ -119,13 +117,13 @@ public class ServerChatForm extends ChatForm {
     }
 
     @Override
-    public void SendMessageInTextbox() {
+    public void SendMessageInTextBox() {
         try {
             if (!txtText.getText().equals("")) {
                 String message = txtText.getText().replace("\n", "\n      ");
                 txtText.setText("");
                 if (bll_LANServerChat != null) {
-                    bll_LANServerChat.SendMessage(message);
+                    bll_LANServerChat.sendMessage(message);
                     chatData += "Me: " + message + "\n";
                     txtChatBox.setText(chatData);
                     //System.out.println("Server send: "+message);
@@ -188,5 +186,16 @@ public class ServerChatForm extends ChatForm {
         setVisible(false);
         dispose();
         instance = null;
+    }
+
+    @Override
+    public void khoiTaoEventSendFile() {
+        btnSendFile.addActionListener(e -> {
+            String path = super.getPath();
+
+            if (path != null && !path.isEmpty()) {
+                bll_LANServerChat.sendFile(path);
+            }
+        });
     }
 }

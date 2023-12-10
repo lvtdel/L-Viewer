@@ -9,15 +9,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
@@ -39,7 +36,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import java.awt.SystemColor;
 import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 public class LANForm extends JFrame {
@@ -77,22 +73,20 @@ public class LANForm extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    //LANForm frame = new LANForm();
-                    //frame.setVisible(true);
-                    LANForm.OpenForm(null);
+        EventQueue.invokeLater(() -> {
+            try {
+                //LANForm frame = new LANForm();
+                //frame.setVisible(true);
+                LANForm.OpenForm();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
 
-    public static void OpenForm(String[] args) {
+    public static void OpenForm() {
         if (isOpened)
             return;
         else {

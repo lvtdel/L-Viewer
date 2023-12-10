@@ -2,7 +2,7 @@ import GUI.LANForm;
 
 import java.awt.*;
 
-public class Apllication {
+public class Application {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
